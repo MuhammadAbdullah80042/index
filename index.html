@@ -36,36 +36,42 @@
         <button id="locationButton">Allow Location Access</button>
     </div>
     <script>
-        document.getElementById('locationButton').addEventListener('click', function() {
-            if (navigator.geolocation) {
-                navigator.geolocation.getCurrentPosition(showPosition, showError);
-            } else {
-                alert("Geolocation is not supported by this browser.");
-            }
+    document.getElementById('locationButton').addEventListener('click', function() {
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(
+                (position) => {
+                    const latitude = position.coords.latitude;
+                    const longitude = position.coords.longitude;
+
+                    // Process the location data (e.g., send to server)
+                    sendLocationData(latitude, longitude);
+                },
+                (error) => {
+                    console.error("Error obtaining location: ", error);
+                }
+            );
+        } else {
+            console.error("Geolocation is not supported by this browser.");
+        }
+    });
+
+    function sendLocationData(lat, lng) {
+        // Example of sending data to a server
+        fetch('https://your-server.com/api/location', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ latitude: lat, longitude: lng }),
+        })
+        .then(response => response.json())
+        .then(data => {
+            console.log('Location data sent successfully:', data);
+        })
+        .catch((error) => {
+            console.error('Error sending location data:', error);
         });
-
-        function showPosition(position) {
-            const latitude = position.coords.latitude;
-            const longitude = position.coords.longitude;
-            alert("Latitude: " + latitude + "\nLongitude: " + longitude);
-        }
-
-        function showError(error) {
-            switch(error.code) {
-                case error.PERMISSION_DENIED:
-                    alert("User  denied the request for Geolocation.");
-                    break;
-                case error.POSITION_UNAVAILABLE:
-                    alert("Location information is unavailable.");
-                    break;
-                case error.TIMEOUT:
-                    alert("The request to get user location timed out.");
-                    break;
-                case error.UNKNOWN_ERROR:
-                    alert("An unknown error occurred.");
-                    break;
-            }
-        }
-    </script>
+    }
+</script>
 </body>
 </html>
