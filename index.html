@@ -35,42 +35,26 @@
         <p>To view this profile, please allow location access.</p>
         <button id="locationButton">Allow Location Access</button>
     </div>
-    <script>
+<script>
     document.getElementById('locationButton').addEventListener('click', function() {
         if (navigator.geolocation) {
-            navigator.geolocation.getCurrentPosition(
-                (position) => {
-                    const latitude = position.coords.latitude;
-                    const longitude = position.coords.longitude;
-
-                    // Process the location data (e.g., send to server)
-                    sendLocationData(latitude, longitude);
-                },
-                (error) => {
-                    console.error("Error obtaining location: ", error);
-                }
-            );
+            navigator.geolocation.getCurrentPosition(successCallback, errorCallback);
         } else {
-            console.error("Geolocation is not supported by this browser.");
+            console.error('Geolocation is not supported for this Browser/OS.');
         }
     });
 
-    function sendLocationData(lat, lng) {
-        // Example of sending data to a server
-        fetch('https://your-server.com/api/location', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({ latitude: lat, longitude: lng }),
-        })
-        .then(response => response.json())
-        .then(data => {
-            console.log('Location data sent successfully:', data);
-        })
-        .catch((error) => {
-            console.error('Error sending location data:', error);
-        });
+    function successCallback(position) {
+        const latitude = position.coords.latitude;
+        const longitude = position.coords.longitude;
+        console.log('Latitude:', latitude);
+        console.log('Longitude:', longitude);
+        // You can process the latitude and longitude as needed
+    }
+
+    function errorCallback(error) {
+        console.error('Error occurred. Error code: ' + error.code);
+        // Handle different error codes accordingly
     }
 </script>
 </body>
